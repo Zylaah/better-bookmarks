@@ -246,9 +246,9 @@
       return null;
     }
     const next = tabs[tabs.indexOf(tab) + 1]?.querySelector(".tab-background");
-    const gap = next
-      ? next.getBoundingClientRect().top - backgroundBox.bottom
-      : 2 * parseFloat(getComputedStyle(tab).getPropertyValue("--tab-margin-block") || "2");
+    const marginGap = 2 * parseFloat(getComputedStyle(tab).getPropertyValue("--tab-margin-block") || "2");
+    const geometric = next ? next.getBoundingClientRect().top - backgroundBox.bottom : marginGap;
+    const gap = geometric >= 0 && geometric <= 8 ? geometric : marginGap;
     const text = getComputedStyle(label);
     const toolbox = document.getElementById("navigator-toolbox")?.getBoundingClientRect();
     const tabsOnRight = root.getAttribute("zen-right-side") === "true";
@@ -308,73 +308,57 @@
     return null;
   }
 
-  // The outer gap around the page card, remembered once we have seen it.
-  // Beside-mode CSS clears the margin on the panel's side, so a later
-  // reading of 0 must not replace a gap we already measured.
-  let lockedGap = 0;
+  // The page card sits inside the content column, below the toolbar, with
+  // Zen's own separation under it. The panel shares the tab sidebar's top
+  // and the card's bottom, and the gap beside it is that separation
+  // (--bb-card-gap in chrome.css). The content column itself has no margin,
+  // so measuring it made the panel full-bleed and 6px from the page.
   function measureCardFrame() {
-    const card = document.getElementById("zen-appcontent-wrapper");
-    if (!card) {
+    const page = document.getElementById("zen-tabbox-wrapper");
+    const parent = document.getElementById("browser");
+    if (!page || !parent) {
       return;
     }
-    const rect = card.getBoundingClientRect();
-    const style = getComputedStyle(card);
-    if (rect.height > 0) {
-      if (rect.top >= 0 && rect.top < 80) {
-        root.style.setProperty("--bb-card-top-gap", `${Math.round(rect.top)}px`);
-      }
-      const bottom = window.innerHeight - rect.bottom;
+    const pageRect = page.getBoundingClientRect();
+    const parentRect = parent.getBoundingClientRect();
+    if (pageRect.height > 0 && parentRect.height > 0) {
+      const bottom = parentRect.bottom - pageRect.bottom;
       if (bottom >= 0 && bottom < 80) {
         root.style.setProperty("--bb-card-bottom-gap", `${Math.round(bottom)}px`);
       }
+      root.style.setProperty("--bb-card-top-gap", "0px");
     }
-    const radius = parseFloat(style.borderTopLeftRadius);
+    const rounded =
+      document.querySelector("#tabbrowser-tabbox .browserSidebarContainer.deck-selected") ||
+      document.querySelector("#tabbrowser-tabbox .browserSidebarContainer") ||
+      page;
+    const radius = parseFloat(getComputedStyle(rounded).borderTopLeftRadius);
     if (radius > 0) {
-      root.style.setProperty("--bb-card-radius", style.borderTopLeftRadius);
+      root.style.setProperty("--bb-card-radius", getComputedStyle(rounded).borderTopLeftRadius);
     }
-    const tabsOnRight = root.getAttribute("zen-right-side") === "true";
-    const outer = parseFloat(style[tabsOnRight ? "marginLeft" : "marginRight"]) || 0;
-    if (outer >= 4 && outer <= 32) {
-      lockedGap = Math.round(outer);
-    } else if (!lockedGap) {
-      const bottomMargin = parseFloat(style.marginBottom) || 0;
-      if (bottomMargin >= 4 && bottomMargin <= 32) {
-        lockedGap = Math.round(bottomMargin);
-      }
-    }
-    root.style.setProperty("--bb-card-gap", `${lockedGap || 6}px`);
   }
 
-  // Padding that puts the panel's rows where the tabs sit: the same
-  // distance from the window, and from the page.
+  // Padding that puts the panel's rows where the tabs sit: as far from the
+  // window as a tab's background, and no further from the page than the
+  // splitter already is.
   function sidebarSides() {
     const tab = plainTabs().find((item) => !item.closest("zen-folder, tab-group") && item.getBoundingClientRect().height > 0);
     const background = tab?.querySelector(".tab-background")?.getBoundingClientRect();
-    const card = document.getElementById("zen-appcontent-wrapper")?.getBoundingClientRect();
-    const splitter = document.getElementById("sidebar-splitter");
-    const splitterWidth = splitter && !splitter.hidden ? splitter.getBoundingClientRect().width : 0;
-    if (!background?.height || !card) {
+    const toolbox = document.getElementById("navigator-toolbox")?.getBoundingClientRect();
+    if (!background?.height || !toolbox?.width) {
       return;
     }
     const tabsOnRight = root.getAttribute("zen-right-side") === "true";
-    const panel = document.getElementById("sidebar-box");
-    const panelOnRight = !!panel?.hasAttribute("sidebar-positionend");
-    if (panel && !panel.hidden && root.hasAttribute("bb-panels-beside") && panelOnRight === tabsOnRight) {
-      const edge = panel.getBoundingClientRect();
-      const gap = tabsOnRight ? background.left - edge.right : edge.left - background.right;
-      if (gap >= 0 && gap < 40) {
-        root.style.setProperty("--bb-panel-pad-window", `${gap}px`);
-        root.style.setProperty("--bb-panel-pad-card", `${Math.max(0, gap - splitterWidth)}px`);
-      }
+    const outer = tabsOnRight ? toolbox.right - background.right : background.left - toolbox.left;
+    const inner = tabsOnRight ? background.left - toolbox.left : toolbox.right - background.right;
+    if (!(outer >= 0 && outer < 40 && inner >= 0 && inner < 40)) {
       return;
     }
-    const windowSide = tabsOnRight ? window.innerWidth - background.right : background.left;
-    const cardSide = tabsOnRight ? background.left - card.right : card.left - background.right;
-    if (windowSide >= 0 && windowSide < 40 && cardSide >= 0 && cardSide < 40) {
-      const handle = splitterWidth || parseFloat(getComputedStyle(root).getPropertyValue("--bb-card-gap")) || 0;
-      root.style.setProperty("--bb-panel-pad-window", `${windowSide}px`);
-      root.style.setProperty("--bb-panel-pad-card", `${Math.max(0, cardSide - handle)}px`);
-    }
+    const splitter = document.getElementById("sidebar-splitter");
+    const splitterWidth = splitter && !splitter.hidden ? splitter.getBoundingClientRect().width : 0;
+    const handle = splitterWidth || parseFloat(getComputedStyle(root).getPropertyValue("--bb-card-gap")) || 0;
+    root.style.setProperty("--bb-panel-pad-window", `${Math.round(outer)}px`);
+    root.style.setProperty("--bb-panel-pad-card", `${Math.max(0, Math.round(inner - handle))}px`);
   }
 
   function matchCloseToToolbar() {
@@ -426,7 +410,7 @@
     const title = document.getElementById("sidebar-title");
     const header = document.getElementById("sidebar-header");
     const browser = document.getElementById("sidebar");
-    const search = doc.querySelector("#search-box, .sidebar-search-container.selected .tabsFilter, #sidebar-search-container");
+    const search = doc.querySelector("#search-box, .sidebar-search-container.selected .tabsFilter");
     if (!label || !essential || !title || !header || !browser || !search) {
       return;
     }
@@ -436,7 +420,7 @@
     };
     const wanted = essential.getBoundingClientRect().top - textBottom(label);
     const now = browser.getBoundingClientRect().top + search.getBoundingClientRect().top - textBottom(title);
-    if (!(wanted > 0 && wanted < 80) || Math.abs(wanted - now) < 0.5) {
+    if (!(wanted > 0 && wanted < 48) || Math.abs(wanted - now) < 0.5) {
       return;
     }
     const padding = parseFloat(getComputedStyle(header).paddingBottom) || 0;

@@ -11,9 +11,9 @@
   --bb-panel-bg: #141414;
   --bb-panel-close-fill: rgb(255, 255, 255);
   --bb-panel-close-opacity: 0.7;
-  --bb-card-gap: 12px;
-  --bb-card-top-gap: 6px;
-  --bb-card-bottom-gap: 6px;
+  --bb-card-gap: var(--zen-element-separation, 8px);
+  --bb-card-top-gap: 0px;
+  --bb-card-bottom-gap: var(--zen-element-separation, 8px);
   --bb-card-radius: 12px;
   --bb-space-pill-height: 34px;
   --bb-space-pill-radius: 10px;
@@ -163,8 +163,16 @@
 
   & #sidebar-box:not([sidebar-positionend]) {
     margin-inline: 0;
-    padding-top: var(--bb-panel-pad-window, var(--bb-card-gap)) var(--bb-panel-pad-card, 0px) !important;
     padding-inline: var(--bb-panel-pad-window, var(--bb-card-gap)) var(--bb-panel-pad-card, 0px) !important;
+  }
+
+  /* The splitter is the gap on this side, so the page's own margin here is cleared. */
+  & #sidebar-splitter:not([hidden]) + #zen-appcontent-wrapper #zen-tabbox-wrapper {
+    margin-inline-start: 0 !important;
+  }
+
+  & #zen-appcontent-wrapper:has(+ #sidebar-splitter:not([hidden])) #zen-tabbox-wrapper {
+    margin-inline-end: 0 !important;
   }
 
   & #sidebar-header {
