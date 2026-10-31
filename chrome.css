@@ -11,7 +11,7 @@
   --bb-panel-bg: #141414;
   --bb-panel-close-fill: rgb(255, 255, 255);
   --bb-panel-close-opacity: 0.7;
-  --bb-card-gap: 6px;
+  --bb-card-gap: 12px;
   --bb-card-top-gap: 6px;
   --bb-card-bottom-gap: 6px;
   --bb-card-radius: 12px;
@@ -163,6 +163,7 @@
 
   & #sidebar-box:not([sidebar-positionend]) {
     margin-inline: 0;
+    padding-top: var(--bb-panel-pad-window, var(--bb-card-gap)) var(--bb-panel-pad-card, 0px) !important;
     padding-inline: var(--bb-panel-pad-window, var(--bb-card-gap)) var(--bb-panel-pad-card, 0px) !important;
   }
 
