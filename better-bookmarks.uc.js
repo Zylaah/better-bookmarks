@@ -309,10 +309,10 @@
   }
 
   // The page card sits inside the content column, below the toolbar, with
-  // Zen's own separation under it. The panel shares the tab sidebar's top
-  // and the card's bottom, and the gap beside it is that separation
-  // (--bb-card-gap in chrome.css). The content column itself has no margin,
-  // so measuring it made the panel full-bleed and 6px from the page.
+  // Zen's own separation under it. The panel uses that same separation
+  // above and below (--bb-card-top-gap and --bb-card-bottom-gap). The
+  // content column itself has no margin, so measuring it made the panel
+  // full-bleed and 6px from the page.
   function measureCardFrame() {
     const page = document.getElementById("zen-tabbox-wrapper");
     const parent = document.getElementById("browser");
@@ -325,8 +325,8 @@
       const bottom = parentRect.bottom - pageRect.bottom;
       if (bottom >= 0 && bottom < 80) {
         root.style.setProperty("--bb-card-bottom-gap", `${Math.round(bottom)}px`);
+        root.style.setProperty("--bb-card-top-gap", `${Math.round(bottom)}px`);
       }
-      root.style.setProperty("--bb-card-top-gap", "0px");
     }
     const rounded =
       document.querySelector("#tabbrowser-tabbox .browserSidebarContainer.deck-selected") ||
