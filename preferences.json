@@ -1,0 +1,27 @@
+[
+  {
+    "type": "separator",
+    "label": "Panels",
+    "id": "better-bookmarks-panels"
+  },
+  {
+    "type": "checkbox",
+    "label": "Bookmarks, History and Synced Tabs in the tab sidebar's look",
+    "property": "better-bookmarks.style",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "label": "Those panels beside the page, full height, as a second sidebar",
+    "property": "better-bookmarks.beside",
+    "defaultValue": true,
+    "conditions": [
+      {
+        "if": {
+          "property": "better-bookmarks.style",
+          "value": true
+        }
+      }
+    ]
+  }
+]

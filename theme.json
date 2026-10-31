@@ -1,0 +1,25 @@
+{
+  "id": "better-bookmarks",
+  "name": "Better Bookmarks",
+  "description": "Bookmarks, History and Synced Tabs as a second sidebar, with rows matched to your tabs.",
+  "version": "1.0.0",
+  "updatedAt": "2026-10-31T19:30:00Z",
+  "style": {
+    "chrome": "chrome.css"
+  },
+  "scripts": {
+    "better-bookmarks.uc.js": {
+      "include": [
+        "chrome://browser/content/browser.xhtml"
+      ]
+    }
+  },
+  "preferences": "preferences.json",
+  "tags": [
+    "sidebar",
+    "bookmarks"
+  ],
+  "fork": [
+    "zen"
+  ]
+}

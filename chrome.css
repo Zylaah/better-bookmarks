@@ -1,0 +1,219 @@
+/* Frame of Firefox's sidebar (Bookmarks, History, Synced Tabs).
+   The page inside the panel is panels.css, loaded by better-bookmarks.uc.js.
+   bb-panels-plain turns the look off. bb-panels-beside moves it out of the
+   page card. bb-panels-light follows a light Zen space. */
+
+:root {
+  --bb-ink: rgba(255, 255, 255, 0.92);
+  --bb-pill-bg: rgba(255, 255, 255, 0.16);
+  --bb-separator: rgba(255, 255, 255, 0.1);
+  --bb-parting: rgba(255, 255, 255, 0.065);
+  --bb-panel-bg: #141414;
+  --bb-panel-close-fill: rgb(255, 255, 255);
+  --bb-panel-close-opacity: 0.7;
+  --bb-card-gap: 6px;
+  --bb-card-top-gap: 6px;
+  --bb-card-bottom-gap: 6px;
+  --bb-card-radius: 12px;
+  --bb-space-pill-height: 34px;
+  --bb-space-pill-radius: 10px;
+  --bb-text-size: 13px;
+}
+
+:root[bb-panels-light] {
+  --bb-ink: rgba(0, 0, 0, 0.88);
+  --bb-pill-bg: rgba(0, 0, 0, 0.06);
+  --bb-separator: rgba(0, 0, 0, 0.12);
+  --bb-parting: rgba(0, 0, 0, 0.08);
+  --bb-panel-bg: #f3f3f3;
+  --bb-panel-close-fill: rgb(0, 0, 0);
+  --bb-panel-close-opacity: 0.7;
+}
+
+:root:not([bb-panels-plain]) {
+  & #sidebar-box {
+    background: var(--bb-panel-bg) !important;
+    color: var(--bb-ink) !important;
+    color-scheme: dark !important;
+    border: none !important;
+    border-inline-end: 1px solid var(--bb-separator) !important;
+    border-radius: 0 0 0 var(--bb-card-radius) !important;
+    box-shadow: none !important;
+    corner-shape: round !important;
+    overflow: hidden !important;
+  }
+
+  &[bb-panels-light] #sidebar-box {
+    color-scheme: light !important;
+  }
+
+  & #sidebar-box[sidebar-positionend] {
+    border-inline-end: none !important;
+    border-inline-start: 1px solid var(--bb-separator) !important;
+    border-radius: 0 0 var(--bb-card-radius) 0 !important;
+  }
+
+  & #sidebar-header {
+    align-items: center !important;
+    box-sizing: border-box !important;
+    padding: var(--bb-panel-title-top, 0px) 8px var(--bb-panel-title-pad, 6px) !important;
+    border-bottom: none !important;
+    font-size: var(--bb-text-size) !important;
+  }
+
+  & #sidebar-switcher-target {
+    flex: 0 1 auto !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin: 0 !important;
+    padding: 0 8px !important;
+    height: var(--bb-space-pill-height) !important;
+    min-height: var(--bb-space-pill-height) !important;
+    border: none !important;
+    border-radius: var(--bb-space-pill-radius) !important;
+    corner-shape: var(--bb-space-pill-corner, round) !important;
+    background: transparent !important;
+    color: inherit !important;
+  }
+
+  & #sidebar-switcher-target:is(:hover, .active, [open]) {
+    background-color: var(--bb-pill-bg) !important;
+  }
+
+  & #sidebar-icon,
+  & #sidebar-switcher-arrow {
+    display: none !important;
+  }
+
+  & #sidebar-title {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: var(--bb-text-size) !important;
+    font-weight: 600 !important;
+    color: color-mix(in srgb, var(--zen-primary-color, var(--bb-ink)) 25%, var(--bb-ink)) !important;
+  }
+
+  & #sidebar-close {
+    appearance: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: var(--bb-space-pill-height) !important;
+    min-width: var(--bb-space-pill-height) !important;
+    height: var(--bb-space-pill-height) !important;
+    min-height: var(--bb-space-pill-height) !important;
+    margin: 0 0 0 auto !important;
+    margin-inline-start: auto !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: var(--bb-space-pill-radius) !important;
+    corner-shape: var(--bb-space-pill-corner, round) !important;
+    background-color: transparent !important;
+    list-style-image: url("chrome://sine/content/better-bookmarks/icons/x.svg") !important;
+    -moz-context-properties: fill, fill-opacity !important;
+    fill: var(--bb-panel-close-fill) !important;
+    fill-opacity: var(--bb-panel-close-opacity) !important;
+
+    & > .toolbarbutton-icon {
+      width: 16px !important;
+      height: 16px !important;
+      padding: 0 !important;
+      background: none !important;
+    }
+  }
+
+  & #sidebar-close:hover {
+    background-color: var(--bb-pill-bg) !important;
+  }
+
+  & #sidebar {
+    background: transparent !important;
+  }
+}
+
+/* Beside the page: the window's own background, as tall as the page card.
+   The splitter is the gap, and the handle for resizing. */
+:root[bb-panels-beside]:not([bb-panels-plain]) {
+  & #sidebar-box,
+  & #sidebar-box[sidebar-positionend] {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    margin-block: var(--bb-card-top-gap) var(--bb-card-bottom-gap) !important;
+    box-sizing: border-box !important;
+  }
+
+  & :is(#sidebar-box, #sidebar-splitter) {
+    order: 0 !important;
+  }
+
+  & #sidebar-box {
+    z-index: 1;
+  }
+
+  & #zen-appcontent-wrapper {
+    z-index: 3;
+  }
+
+  & #sidebar-box[sidebar-positionend] {
+    margin-inline: 0;
+    padding-inline: var(--bb-panel-pad-card, 0px) var(--bb-panel-pad-window, var(--bb-card-gap)) !important;
+  }
+
+  & #sidebar-box:not([sidebar-positionend]) {
+    margin-inline: 0;
+    padding-inline: var(--bb-panel-pad-window, var(--bb-card-gap)) var(--bb-panel-pad-card, 0px) !important;
+  }
+
+  & #sidebar-header {
+    padding-inline: 0 !important;
+  }
+
+  & #sidebar {
+    clip-path: inset(0 round var(--bb-card-radius));
+  }
+
+  & #sidebar-splitter {
+    appearance: none !important;
+    width: var(--bb-card-gap) !important;
+    min-width: var(--bb-card-gap) !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    opacity: 1 !important;
+  }
+
+  & #zen-appcontent-wrapper:has(+ #sidebar-splitter:not([hidden])) {
+    margin-inline-end: 0 !important;
+  }
+
+  & #sidebar-splitter:not([hidden]) + #zen-appcontent-wrapper {
+    margin-inline-start: 0 !important;
+  }
+}
+
+/* Same side as the tabs: a hairline between them, the full height of the window. */
+:root[bb-panels-beside]:not([bb-panels-plain]):not([zen-compact-mode="true"]) {
+  &:not([zen-right-side="true"]) #sidebar-box:not([sidebar-positionend]),
+  &[zen-right-side="true"] #sidebar-box[sidebar-positionend] {
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset-block: calc(-1 * var(--bb-card-top-gap)) calc(-1 * var(--bb-card-bottom-gap));
+      width: 1px;
+      background: var(--bb-parting);
+      pointer-events: none;
+    }
+  }
+
+  &:not([zen-right-side="true"]) #sidebar-box:not([sidebar-positionend])::before {
+    inset-inline-start: 0;
+  }
+
+  &[zen-right-side="true"] #sidebar-box[sidebar-positionend]::before {
+    inset-inline-end: 0;
+  }
+}

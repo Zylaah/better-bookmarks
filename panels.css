@@ -1,0 +1,404 @@
+/* Loaded into the Bookmarks, History and Synced Tabs documents.
+   Row sizes come from the tabs, written as variables by better-bookmarks.uc.js.
+   A tree cannot round or gap its own rows, so the highlight is drawn behind it. */
+
+:root {
+  color-scheme: dark !important;
+  background: transparent !important;
+  color: var(--bb-ink) !important;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent !important;
+  scrollbar-width: thin !important;
+
+  --bb-ink: rgba(255, 255, 255, 0.92);
+  --bb-quiet: rgba(255, 255, 255, 0.55);
+  --bb-icon: rgb(255, 255, 255);
+  --bb-icon-opacity: 0.6;
+  --bb-field: rgba(255, 255, 255, 0.06);
+  --bb-field-hover: rgba(255, 255, 255, 0.08);
+  --bb-field-line: rgba(255, 255, 255, 0.14);
+  --bb-line: rgba(255, 255, 255, 0.08);
+  --bb-link: rgb(90, 185, 245);
+  --bb-button-bg: rgba(255, 255, 255, 0.92);
+  --bb-button-fg: rgb(18, 18, 18);
+  --bb-row-hover-bg: rgba(255, 255, 255, 0.115);
+  --bb-row-selected-bg: rgba(255, 255, 255, 0.14);
+  --bb-row-text: rgba(255, 255, 255, 0.8);
+  --bb-row-text-selected: rgb(255, 255, 255);
+
+  --bb-row: var(--bb-row-h, 34px);
+  --bb-gap: var(--bb-row-gap, 4px);
+  --bb-radius: var(--bb-row-radius, 9.5px);
+  --bb-font-size: var(--bb-row-font-size, 13px);
+  --bb-font-weight: var(--bb-row-font-weight, 400);
+  --bb-inset: var(--bb-row-inset, 8px);
+}
+
+:root[bb-panels-light] {
+  color-scheme: light !important;
+  scrollbar-color: rgba(0, 0, 0, 0.28) transparent !important;
+
+  --bb-ink: rgba(0, 0, 0, 0.88);
+  --bb-quiet: rgba(0, 0, 0, 0.55);
+  --bb-icon: rgb(0, 0, 0);
+  --bb-field: rgba(0, 0, 0, 0.05);
+  --bb-field-hover: rgba(0, 0, 0, 0.07);
+  --bb-field-line: rgba(0, 0, 0, 0.16);
+  --bb-line: rgba(0, 0, 0, 0.08);
+  --bb-link: rgb(0, 102, 204);
+  --bb-button-bg: rgb(32, 32, 32);
+  --bb-button-fg: rgb(255, 255, 255);
+  --bb-row-hover-bg: rgba(0, 0, 0, 0.06);
+  --bb-row-selected-bg: rgba(0, 0, 0, 0.08);
+  --bb-row-text: rgba(0, 0, 0, 0.8);
+  --bb-row-text-selected: rgb(0, 0, 0);
+}
+
+body {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+#sidebar-search-container,
+.sidebar-search-container.selected {
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 2px var(--bb-inset) 8px !important;
+  padding-inline: var(--bb-panel-inset, var(--bb-inset)) !important;
+}
+
+:is(#search-box, .tabsFilter) {
+  margin: 0 !important;
+  font-size: var(--bb-font-size) !important;
+  --input-text-background-color: var(--bb-field);
+  --input-text-border: 1px solid transparent;
+  --input-text-border-radius: var(--bb-radius);
+  --input-search-border-radius: var(--bb-radius);
+  --input-text-min-height: var(--bb-row);
+  --input-text-color: var(--bb-ink);
+  --icon-color: var(--bb-quiet);
+  --focus-outline: none;
+}
+
+:is(#search-box, .tabsFilter):is(:hover, :focus-within) {
+  --input-text-background-color: var(--bb-field-hover);
+}
+
+#viewButton {
+  appearance: none !important;
+  margin: 0 !important;
+  padding: 0 8px !important;
+  min-height: var(--bb-row) !important;
+  border: none !important;
+  border-radius: var(--bb-radius) !important;
+  background: transparent !important;
+  color: var(--bb-quiet) !important;
+  font-size: var(--bb-font-size) !important;
+}
+
+#viewButton:hover,
+#viewButton[open] {
+  background: var(--bb-row-hover-bg) !important;
+  color: var(--bb-ink) !important;
+}
+
+.sidebar-placesTree {
+  position: relative !important;
+  z-index: 1 !important;
+  margin: 0 !important;
+  padding-inline: var(--bb-panel-inset, var(--bb-inset)) !important;
+  background: transparent !important;
+  font-family: var(--bb-row-font-family, inherit) !important;
+  font-size: var(--bb-font-size) !important;
+  font-weight: var(--bb-font-weight) !important;
+}
+
+.sidebar-placesTree:focus-visible {
+  outline: none !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-row {
+  height: calc(var(--bb-row) + var(--bb-gap)) !important;
+  min-height: calc(var(--bb-row) + var(--bb-gap)) !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-row(hover),
+.sidebar-placesTreechildren::-moz-tree-row(selected),
+.sidebar-placesTreechildren::-moz-tree-row(selected, focus) {
+  background: transparent !important;
+}
+
+#bb-row-pills {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bb-row-pill {
+  position: fixed;
+  box-sizing: border-box;
+  border-radius: var(--bb-pill-radius, var(--bb-radius));
+  corner-shape: var(--bb-pill-corner, round);
+  pointer-events: none;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &[hover] {
+    background-color: var(--bb-row-hover-bg);
+  }
+
+  &[selected] {
+    background-color: var(--bb-row-selected-bg);
+  }
+}
+
+.sidebar-placesTreechildren::-moz-tree-cell-text {
+  margin-inline: 0 !important;
+  color: var(--bb-row-text) !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-cell-text(selected),
+.sidebar-placesTreechildren::-moz-tree-cell-text(selected, focus) {
+  color: var(--bb-row-text-selected) !important;
+}
+
+.sidebar-placesTreechildren {
+  mask-image: linear-gradient(to left, transparent var(--bb-row-pad, 10px), #000 calc(var(--bb-row-pad, 10px) + 2em)) !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-cell {
+  padding: 0 !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-image {
+  margin-inline-end: var(--bb-row-icon-gap, 8px) !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-image,
+.sidebar-placesTreechildren::-moz-tree-twisty,
+.sidebar-placesTreechildren::-moz-tree-image(selected),
+.sidebar-placesTreechildren::-moz-tree-twisty(selected) {
+  color: var(--bb-quiet) !important;
+  fill: currentColor !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-separator {
+  margin: 0 10px !important;
+  border-top: 1px solid var(--bb-line) !important;
+}
+
+/* The folder icon shows open and closed, so the twisty arrow is not drawn.
+   Nested rows still step in. A bookmark's own favicon is left alone:
+   the globe below has no !important, and only fills in when Firefox has
+   no image of its own. */
+.sidebar-placesTreechildren::-moz-tree-twisty {
+  width: 0 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style-image: none !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-image(title) {
+  margin-inline-start: var(--bb-row-pad, 10px) !important;
+  padding-inline-start: 0 !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-indentation {
+  width: var(--bb-row-indent, 14px) !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-image {
+  -moz-context-properties: fill, fill-opacity !important;
+  fill: var(--bb-icon) !important;
+  fill-opacity: var(--bb-icon-opacity) !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-image(title) {
+  list-style-image: url("chrome://sine/content/better-bookmarks/icons/world.svg");
+}
+
+.sidebar-placesTreechildren::-moz-tree-image(title, container) {
+  list-style-image: url("chrome://sine/content/better-bookmarks/icons/folder.svg") !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-image(title, open) {
+  list-style-image: url("chrome://sine/content/better-bookmarks/icons/folder-open.svg") !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-image(container, queryFolder_toolbar_____) {
+  list-style-image: url("chrome://sine/content/better-bookmarks/icons/layout-navbar.svg") !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-image(container, queryFolder_menu________) {
+  list-style-image: url("chrome://sine/content/better-bookmarks/icons/list.svg") !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-image(query) {
+  list-style-image: url("chrome://sine/content/better-bookmarks/icons/folders.svg") !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-image(query, OrganizerQuery_allbms_____v) {
+  list-style-image: url("chrome://sine/content/better-bookmarks/icons/bookmark.svg") !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-image(query, OrganizerQuery_downloads__v) {
+  list-style-image: url("chrome://sine/content/better-bookmarks/icons/download.svg") !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-image(title, query, tagContainer),
+.sidebar-placesTreechildren::-moz-tree-image(query, OrganizerQuery_tags_______v) {
+  list-style-image: url("chrome://sine/content/better-bookmarks/icons/tag.svg") !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-image(title, query, dayContainer),
+.sidebar-placesTreechildren::-moz-tree-image(query, OrganizerQuery_history____v) {
+  list-style-image: url("chrome://sine/content/better-bookmarks/icons/clock.svg") !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-image(title, query, hostContainer),
+.sidebar-placesTreechildren::-moz-tree-image(title, query, folder) {
+  list-style-image: url("chrome://sine/content/better-bookmarks/icons/folder.svg") !important;
+}
+
+.sidebar-placesTreechildren::-moz-tree-image(title, query, hostContainer, open),
+.sidebar-placesTreechildren::-moz-tree-image(title, query, folder, open) {
+  list-style-image: url("chrome://sine/content/better-bookmarks/icons/folder-open.svg") !important;
+}
+
+.list {
+  padding-inline: var(--bb-panel-inset, var(--bb-inset)) !important;
+}
+
+.item-title-container {
+  box-sizing: border-box !important;
+  height: var(--bb-row) !important;
+  margin-block: calc(var(--bb-gap) / 2) !important;
+  padding-block: 0 !important;
+  padding-inline-end: var(--bb-row-pad, 10px) !important;
+  border-radius: var(--bb-pill-radius, var(--bb-radius)) !important;
+  corner-shape: var(--bb-pill-corner, round) !important;
+  font-family: var(--bb-row-font-family, inherit) !important;
+  font-size: var(--bb-font-size) !important;
+  font-weight: var(--bb-font-weight) !important;
+  color: var(--bb-row-text) !important;
+}
+
+.item.client > .item-title-container {
+  padding-inline-start: calc(var(--bb-row-pad, 10px) - 4px) !important;
+  font-weight: 500 !important;
+}
+
+.item-icon-container {
+  margin-inline: 0 var(--bb-row-icon-gap, 8px) !important;
+}
+
+.item-twisty-container {
+  margin-inline-end: 4px !important;
+}
+
+.item-title {
+  margin: 0 !important;
+  line-height: normal !important;
+  text-overflow: clip !important;
+  mask-image: linear-gradient(to left, transparent, #000 2em) !important;
+}
+
+.item:not(.selected) > .item-title-container:hover {
+  background-color: var(--bb-row-hover-bg) !important;
+}
+
+.item.selected > .item-title-container,
+.item.selected:focus > .item-title-container {
+  background-color: var(--bb-row-selected-bg) !important;
+  color: var(--bb-row-text-selected) !important;
+}
+
+.item.client .item-twisty-container,
+.item.client[clientType] > .item-title-container > .item-icon-container {
+  opacity: 0.85;
+}
+
+.item.empty .item-title-container,
+.deck .instructions {
+  color: var(--bb-quiet) !important;
+}
+
+.deck .sync-state {
+  border-top: none !important;
+}
+
+.deck .button {
+  border-radius: 8px !important;
+  background-color: var(--bb-button-bg) !important;
+  color: var(--bb-button-fg) !important;
+  font-weight: 500 !important;
+}
+
+.deck .button:hover {
+  filter: brightness(1.08);
+}
+
+.text-link {
+  color: var(--bb-link) !important;
+}
+
+.item.client > .item-title-container > .item-icon-container {
+  -moz-context-properties: fill, fill-opacity;
+  fill: var(--bb-icon) !important;
+  fill-opacity: var(--bb-icon-opacity);
+  opacity: 1 !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 16px !important;
+}
+
+.item.client[clientType="desktop"] > .item-title-container > .item-icon-container {
+  background-image: url("chrome://sine/content/better-bookmarks/icons/device-desktop.svg") !important;
+}
+
+.item.client[clientType="phone"] > .item-title-container > .item-icon-container {
+  background-image: url("chrome://sine/content/better-bookmarks/icons/device-mobile.svg") !important;
+}
+
+.item.client[clientType="tablet"] > .item-title-container > .item-icon-container {
+  background-image: url("chrome://sine/content/better-bookmarks/icons/device-tablet.svg") !important;
+}
+
+.item.client[clientType="tv"] > .item-title-container > .item-icon-container {
+  background-image: url("chrome://sine/content/better-bookmarks/icons/device-tv.svg") !important;
+}
+
+.item.client[clientType="vr"] > .item-title-container > .item-icon-container {
+  background-image: url("chrome://sine/content/better-bookmarks/icons/device-vision-pro.svg") !important;
+}
+
+.item.tab > .item-title-container > .item-icon-container:not([style*="url"]) {
+  background-image: url("chrome://sine/content/better-bookmarks/icons/world.svg") !important;
+  -moz-context-properties: fill, fill-opacity;
+  fill: var(--bb-icon) !important;
+  fill-opacity: var(--bb-icon-opacity);
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 16px !important;
+}
+
+.item.client .item-twisty-container {
+  background-image: url("chrome://sine/content/better-bookmarks/icons/chevron-down.svg") !important;
+  background-size: 12px !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  -moz-context-properties: fill, fill-opacity;
+  fill: var(--bb-icon) !important;
+  fill-opacity: 0.55;
+  opacity: 1 !important;
+}
+
+.item.client.closed .item-twisty-container {
+  background-image: url("chrome://sine/content/better-bookmarks/icons/chevron-right.svg") !important;
+}
